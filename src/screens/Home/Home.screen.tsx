@@ -1,13 +1,12 @@
-import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator } from "react-native";
-import { useState } from "react";
+import { View, Text, FlatList, Image, ActivityIndicator } from "react-native";
 import { useMovies } from "../../hooks/useMovies";
-import styles from "./Home.screen.styles";
 import { getImageUrl } from "./Home.screen.helpers";
+import styles from "./Home.screen.styles";
 
 export default function HomeScreen() {
-  const [page] = useState(1);
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useMovies();
 
-  const { data, isLoading, isError } = useMovies(page);
+  const movies = data?.pages.flatMap((page) => page.results) ?? [];
 
   if (isLoading) {
     return (
@@ -28,9 +27,9 @@ export default function HomeScreen() {
 
   return (
     <FlatList
-      data={data?.results}
-      contentContainerStyle={{ paddingBottom: 20 }}
+      data={movies}
       keyExtractor={(item) => `movie-${item.id}`}
+      contentContainerStyle={{ paddingBottom: 20 }}
       renderItem={({ item }) => (
         <View style={styles.card}>
           <Image
@@ -42,6 +41,13 @@ export default function HomeScreen() {
           <Text style={styles.title}>{item.title}</Text>
         </View>
       )}
+      onEndReached={() => {
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
     />
   );
 }
