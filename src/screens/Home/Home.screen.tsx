@@ -7,6 +7,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation";
 import { useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
+import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
 
@@ -15,6 +16,7 @@ export default function HomeScreen() {
 
   const [searchLetter, setSearchLetter] = useState("");
   const navigation = useNavigation<NavigationProp>();
+  const { isOffline } = useNetworkStatus();
 
   const movies = data?.pages.flatMap((page) => page.results) ?? [];
 
@@ -63,6 +65,7 @@ export default function HomeScreen() {
 
   return (
     <>
+      {isOffline && <Text style={{ textAlign: "center", color: "red" }}>Estás sin conexión ⚠️</Text>}
       <Button title="Ver Watchlist ⭐" onPress={() => navigation.navigate("Watchlist")} />
       <TextInput
         placeholder="Buscar por letra..."

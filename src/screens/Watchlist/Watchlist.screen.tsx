@@ -10,7 +10,6 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
 
 export default function WatchlistScreen() {
   const { watchlist } = useWatchlistStore();
-  console.log("watchlist", watchlist);
   const navigation = useNavigation<NavigationProp>();
 
   if (watchlist.length === 0) {
