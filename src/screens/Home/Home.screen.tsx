@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, Button } from "react-native";
 import { useMovies, useMoviesWithDetails } from "../../hooks/useMovies";
 import { getImageUrl } from "../../utils/movies";
 import styles from "./Home.screen.styles";
@@ -63,6 +63,7 @@ export default function HomeScreen() {
 
   return (
     <>
+      <Button title="Ver Watchlist ⭐" onPress={() => navigation.navigate("Watchlist")} />
       <TextInput
         placeholder="Buscar por letra..."
         value={searchLetter}

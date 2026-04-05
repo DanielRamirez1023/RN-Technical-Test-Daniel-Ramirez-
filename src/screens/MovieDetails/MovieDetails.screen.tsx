@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, Button } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation";
 import { useMovieDetail } from "../../hooks/useMovies";
 import styles from "./MovieDetails.screen.styles";
 import { getImageUrl } from "../../utils/movies";
+import { useWatchlistStore } from "../../store/watchlistStore";
 
 type MovieDetailsRouteProp = RouteProp<RootStackParamList, "MovieDetails">;
 
@@ -12,6 +13,9 @@ export default function MovieDetailsScreen() {
   const { movieId } = route.params;
 
   const { data, isLoading, isError } = useMovieDetail(movieId);
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlistStore();
+
+  const isFavorite = isInWatchlist(movieId);
 
   if (isLoading) {
     return (
@@ -40,6 +44,20 @@ export default function MovieDetailsScreen() {
       />
 
       <Text style={styles.title}>{data.title}</Text>
+      <Button
+        title={isFavorite ? "Quitar de watchlist" : "Agregar a watchlist"}
+        onPress={() => {
+          if (isFavorite) {
+            removeFromWatchlist(movieId);
+          } else {
+            addToWatchlist({
+              id: data.id,
+              title: data.title,
+              poster_path: data.poster_path,
+            });
+          }
+        }}
+      />
 
       <Text style={styles.section}>Descripción</Text>
       <Text>{data.overview}</Text>
