@@ -1,21 +1,47 @@
-import { View, Text, Button } from "react-native";
-import styles from "./Home.screen.styles";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../navigation";
+import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator } from "react-native";
+import { useState } from "react";
 import { useMovies } from "../../hooks/useMovies";
+import styles from "./Home.screen.styles";
+import { getImageUrl } from "./Home.screen.helpers";
 
 export default function HomeScreen() {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { data, isLoading, error } = useMovies(1);
+  const [page] = useState(1);
 
-  console.log("data", data);
-  console.log("isLoading", isLoading);
-  console.log("error", error);
+  const { data, isLoading, isError } = useMovies(page);
+
+  if (isLoading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" />
+        <Text>Cargando películas...</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.center}>
+        <Text>Error cargando películas ❌</Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Text>Movies App 🎬</Text>
-      <Button title="Go to Movie Details" onPress={() => navigation.navigate("MovieDetails", { movieId: "123" })} />
-    </View>
+    <FlatList
+      data={data?.results}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      keyExtractor={(item) => `movie-${item.id}`}
+      renderItem={({ item }) => (
+        <View style={styles.card}>
+          <Image
+            source={{
+              uri: getImageUrl(item.poster_path),
+            }}
+            style={styles.image}
+          />
+          <Text style={styles.title}>{item.title}</Text>
+        </View>
+      )}
+    />
   );
 }
