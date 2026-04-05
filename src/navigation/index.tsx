@@ -5,7 +5,7 @@ import MovieDetailsScreen from "../screens/MovieDetails/MovieDetails.screen";
 
 export type RootStackParamList = {
   Home: undefined;
-  MovieDetails: { movieId: string };
+  MovieDetails: { movieId: number };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

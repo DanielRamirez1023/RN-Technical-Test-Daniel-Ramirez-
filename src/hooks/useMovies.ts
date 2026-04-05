@@ -1,5 +1,5 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getPopularMovies } from "../services/movieService";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { getMovieCredits, getMovieDetail, getPopularMovies } from "../services/movieService";
 
 export const useMovies = () => {
   return useInfiniteQuery({
@@ -11,6 +11,20 @@ export const useMovies = () => {
         return lastPage.page + 1;
       }
       return undefined;
+    },
+  });
+};
+
+export const useMovieDetail = (movieId: number) => {
+  return useQuery({
+    queryKey: ["movie-detail", movieId],
+    queryFn: async () => {
+      const [detail, credits] = await Promise.all([getMovieDetail(movieId), getMovieCredits(movieId)]);
+
+      return {
+        ...detail,
+        cast: credits.cast,
+      };
     },
   });
 };

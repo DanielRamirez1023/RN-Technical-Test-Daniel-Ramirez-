@@ -1,12 +1,18 @@
-import { View, Text, FlatList, Image, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useMovies } from "../../hooks/useMovies";
-import { getImageUrl } from "./Home.screen.helpers";
+import { getImageUrl } from "../../utils/movies";
 import styles from "./Home.screen.styles";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../navigation";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
 
 export default function HomeScreen() {
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useMovies();
 
   const movies = data?.pages.flatMap((page) => page.results) ?? [];
+  const navigation = useNavigation<NavigationProp>();
 
   if (isLoading) {
     return (
@@ -31,7 +37,7 @@ export default function HomeScreen() {
       keyExtractor={(item) => `movie-${item.id}`}
       contentContainerStyle={{ paddingBottom: 20 }}
       renderItem={({ item }) => (
-        <View style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("MovieDetails", { movieId: item.id })}>
           <Image
             source={{
               uri: getImageUrl(item.poster_path),
@@ -39,7 +45,7 @@ export default function HomeScreen() {
             style={styles.image}
           />
           <Text style={styles.title}>{item.title}</Text>
-        </View>
+        </TouchableOpacity>
       )}
       onEndReached={() => {
         if (hasNextPage && !isFetchingNextPage) {
