@@ -5,11 +5,30 @@ import styles from "./Home.screen.styles";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation";
-import { useState } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import { TextInput } from "react-native-gesture-handler";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
+import type { Movie } from "../../services/movieService";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
+
+const MOVIE_ROW_HEIGHT = 10 + 225 + 10 + 44 + 10;
+
+type MovieListItemProps = {
+  movie: Movie;
+  onPress: (movieId: number) => void;
+};
+
+const MovieListItem = memo(function MovieListItem({ movie, onPress }: MovieListItemProps) {
+  return (
+    <TouchableOpacity style={styles.card} onPress={() => onPress(movie.id)} activeOpacity={0.7}>
+      <Image source={{ uri: getImageUrl(movie.poster_path) }} style={styles.image} resizeMode="cover" />
+      <Text style={styles.title} numberOfLines={2}>
+        {movie.title}
+      </Text>
+    </TouchableOpacity>
+  );
+});
 
 export default function HomeScreen() {
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useMovies();
@@ -18,13 +37,13 @@ export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { isOffline } = useNetworkStatus();
 
-  const movies = data?.pages.flatMap((page) => page.results) ?? [];
+  const movies = useMemo(() => data?.pages.flatMap((page) => page.results) ?? [], [data?.pages]);
 
-  const filteredMovies = movies.filter((movie) => {
-    if (!searchLetter) return true;
-
-    return movie.title.toLowerCase().startsWith(searchLetter.toLowerCase());
-  });
+  const filteredMovies = useMemo(() => {
+    const letter = searchLetter.toLowerCase();
+    if (!letter) return movies;
+    return movies.filter((movie) => movie.title.toLowerCase().startsWith(letter));
+  }, [movies, searchLetter]);
 
   const detailQueries = useMoviesWithDetails(filteredMovies);
 
@@ -45,60 +64,83 @@ export default function HomeScreen() {
     );
   }
 
-  const fullyFilteredMovies = filteredMovies.filter((movie, index) => {
-    const query = detailQueries[index];
+  const fullyFilteredMovies = useMemo(() => {
+    return filteredMovies.filter((movie, index) => {
+      const query = detailQueries[index];
 
-    if (!query?.data) return false;
+      if (!query?.data) return false;
 
-    const { genres, cast } = query.data;
+      const { genres, cast } = query.data;
 
-    const hasGenres = genres.length >= 3;
+      const hasGenres = genres.length >= 3;
 
-    const femaleCount = cast.filter((c) => c.gender === 1).length;
+      const femaleCount = cast.filter((c) => c.gender === 1).length;
 
-    const maleCount = cast.filter((c) => c.gender === 2).length;
+      const maleCount = cast.filter((c) => c.gender === 2).length;
 
-    const hasBalancedCast = femaleCount >= 3 && maleCount >= 3;
+      const hasBalancedCast = femaleCount >= 3 && maleCount >= 3;
 
-    return hasGenres && hasBalancedCast;
-  });
+      return hasGenres && hasBalancedCast;
+    });
+  }, [filteredMovies, detailQueries]);
+
+  const handleMoviePress = useCallback(
+    (movieId: number) => {
+      navigation.navigate("MovieDetails", { movieId });
+    },
+    [navigation]
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: Movie }) => <MovieListItem movie={item} onPress={handleMoviePress} />,
+    [handleMoviePress]
+  );
+
+  const keyExtractor = useCallback((item: Movie) => `movie-${item.id}`, []);
+
+  const getItemLayout = useCallback(
+    (_: ArrayLike<Movie> | null | undefined, index: number) => ({
+      length: MOVIE_ROW_HEIGHT,
+      offset: MOVIE_ROW_HEIGHT * index,
+      index,
+    }),
+    []
+  );
+
+  const onEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const listFooter = useMemo(() => (isFetchingNextPage ? <ActivityIndicator /> : null), [isFetchingNextPage]);
 
   return (
-    <>
-      {isOffline && <Text style={{ textAlign: "center", color: "red" }}>Estás sin conexión ⚠️</Text>}
+    <View style={styles.root}>
+      {isOffline && <Text style={styles.offlineBanner}>Estás sin conexión ⚠️</Text>}
       <Button title="Ver Watchlist ⭐" onPress={() => navigation.navigate("Watchlist")} />
       <TextInput
         placeholder="Buscar por letra..."
         value={searchLetter}
-        onChangeText={(text) => setSearchLetter(text)}
+        onChangeText={setSearchLetter}
         style={styles.input}
       />
       <FlatList
         data={fullyFilteredMovies}
-        keyExtractor={(item) => `movie-${item.id}`}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigation.navigate("MovieDetails", { movieId: item.id })}
-          >
-            <Image
-              source={{
-                uri: getImageUrl(item.poster_path),
-              }}
-              style={styles.image}
-            />
-            <Text style={styles.title}>{item.title}</Text>
-          </TouchableOpacity>
-        )}
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-          }
-        }}
+        keyExtractor={keyExtractor}
+        style={styles.flatList}
+        contentContainerStyle={styles.listContent}
+        renderItem={renderItem}
+        getItemLayout={getItemLayout}
+        initialNumToRender={8}
+        maxToRenderPerBatch={8}
+        windowSize={7}
+        removeClippedSubviews
+        updateCellsBatchingPeriod={50}
+        onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
+        ListFooterComponent={listFooter}
       />
-    </>
+    </View>
   );
 }

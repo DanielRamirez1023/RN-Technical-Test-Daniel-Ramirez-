@@ -1,6 +1,19 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  offlineBanner: {
+    textAlign: "center",
+    color: "red",
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
+  flatList: {
+    flex: 1,
+  },
   center: {
     flex: 1,
     justifyContent: "center",
