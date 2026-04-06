@@ -13,9 +13,14 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.moviesapp.app",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocalNotificationUsageDescription": "This app uses local notifications to remind you to watch your favorite movies."
+      }
     },
     "android": {
+      "package": "com.moviesapp.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,6 +30,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#ffffff"
+        }
+      ],
+      "expo-dev-client"
+    ]
   }
 }

@@ -47,23 +47,6 @@ export default function HomeScreen() {
 
   const detailQueries = useMoviesWithDetails(filteredMovies);
 
-  if (isLoading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-        <Text>Cargando películas...</Text>
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View style={styles.center}>
-        <Text>Error cargando películas ❌</Text>
-      </View>
-    );
-  }
-
   const fullyFilteredMovies = useMemo(() => {
     return filteredMovies.filter((movie, index) => {
       const query = detailQueries[index];
@@ -114,6 +97,23 @@ export default function HomeScreen() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const listFooter = useMemo(() => (isFetchingNextPage ? <ActivityIndicator /> : null), [isFetchingNextPage]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" />
+        <Text>Cargando películas...</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.center}>
+        <Text>Error cargando películas ❌</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.root}>
