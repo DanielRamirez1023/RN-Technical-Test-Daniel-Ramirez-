@@ -1,6 +1,5 @@
 import * as Notifications from "expo-notifications";
 
-// Configuración básica
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,

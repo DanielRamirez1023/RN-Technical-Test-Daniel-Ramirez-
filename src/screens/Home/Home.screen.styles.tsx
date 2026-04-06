@@ -1,15 +1,19 @@
 import { StyleSheet } from "react-native";
+import { CINEMA, FLOATING_TAB_BAR_EXTRA_PADDING } from "../../utils/cinemaTheme";
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: CINEMA.screenBg,
   },
   offlineBanner: {
     textAlign: "center",
-    color: "red",
+    color: CINEMA.red,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   listContent: {
-    paddingBottom: 20,
+    paddingBottom: FLOATING_TAB_BAR_EXTRA_PADDING,
   },
   flatList: {
     flex: 1,
@@ -18,31 +22,53 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: CINEMA.screenBg,
   },
-  card: {
-    margin: 10,
+  centerText: {
+    color: CINEMA.textMuted,
+    marginTop: 8,
+  },
+  columnWrapper: {
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    gap: 12,
+  },
+  loadMoreWrap: {
+    paddingVertical: 24,
     alignItems: "center",
+    gap: 12,
   },
-  image: {
-    width: 150,
-    height: 225,
-    borderRadius: 10,
-  },
-  title: {
-    marginTop: 10,
-    textAlign: "center",
-  },
-  input: {
-    margin: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 8,
-  },
-  pipelineNotice: {
-    marginHorizontal: 10,
+  loadMoreDots: {
+    flexDirection: "row",
+    gap: 6,
     marginBottom: 4,
-    fontSize: 12,
-    color: "#666",
+  },
+  loadMoreDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#333",
+  },
+  loadMoreDotActive: {
+    backgroundColor: CINEMA.red,
+  },
+  loadMoreText: {
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 1,
+    color: CINEMA.textMuted,
+  },
+  sectionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: CINEMA.textPrimary,
   },
 });
 

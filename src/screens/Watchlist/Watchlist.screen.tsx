@@ -1,9 +1,11 @@
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
 import { useWatchlistStore } from "../../store/watchlistStore";
+import { FLOATING_TAB_BAR_EXTRA_PADDING } from "../../utils/cinemaTheme";
 import { CompositeNavigationProp, useNavigation } from "@react-navigation/native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MainTabParamList, RootStackParamList } from "../../navigation";
+import { MainTabParamList } from "../../navigation/TabBarNavigator";
+import { RootStackParamList } from "../../navigation";
 import { getImageUrl } from "../../utils/movies";
 import styles from "./Watchlist.screen.styles";
 
@@ -18,15 +20,17 @@ export default function WatchlistScreen() {
 
   if (watchlist.length === 0) {
     return (
-      <View style={styles.center}>
-        <Text>No hay películas en tu watchlist 🎬</Text>
+      <View style={[styles.center, { paddingBottom: FLOATING_TAB_BAR_EXTRA_PADDING }]}>
+        <Text style={styles.emptyText}>No hay películas en tu watchlist</Text>
       </View>
     );
   }
 
   return (
     <FlatList
+      style={styles.root}
       data={watchlist}
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: FLOATING_TAB_BAR_EXTRA_PADDING }}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <TouchableOpacity

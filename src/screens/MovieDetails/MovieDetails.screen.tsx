@@ -1,6 +1,10 @@
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, Button } from "react-native";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { useLayoutEffect } from "react";
+import { View, Text, Image, ActivityIndicator, ScrollView, Button } from "react-native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation";
+import { CinemaCircleHeaderButton, CinemaHeaderTitle } from "../../components";
+import { CINEMA } from "../../utils/cinemaTheme";
 import { useMovieDetail } from "../../hooks/useMovies";
 import styles from "./MovieDetails.screen.styles";
 import { getImageUrl } from "../../utils/movies";
@@ -9,9 +13,11 @@ import { useNotificationsStore } from "../../store/notificationsStore";
 import { cancelNotification, scheduleMovieReminder } from "../../utils/notifications";
 
 type MovieDetailsRouteProp = RouteProp<RootStackParamList, "MovieDetails">;
+type MovieDetailsNavProp = NativeStackNavigationProp<RootStackParamList, "MovieDetails">;
 
 export default function MovieDetailsScreen() {
   const route = useRoute<MovieDetailsRouteProp>();
+  const navigation = useNavigation<MovieDetailsNavProp>();
   const { movieId } = route.params;
 
   const { data, isLoading, isError } = useMovieDetail(movieId);
@@ -19,6 +25,25 @@ export default function MovieDetailsScreen() {
   const { notifications, setNotification, removeNotification } = useNotificationsStore();
 
   const isFavorite = isInWatchlist(movieId);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerStyle: { backgroundColor: CINEMA.black },
+      headerShadowVisible: false,
+      headerTitleAlign: "center",
+      headerTitle: () => <CinemaHeaderTitle />,
+      headerTintColor: "#fff",
+      headerLeft: () => (
+        <View style={{ marginLeft: 8 }}>
+          <CinemaCircleHeaderButton
+            icon="chevron-back"
+            onPress={() => navigation.goBack()}
+            accessibilityLabel="Volver"
+          />
+        </View>
+      ),
+    });
+  }, [navigation, data]);
 
   if (isLoading) {
     return (

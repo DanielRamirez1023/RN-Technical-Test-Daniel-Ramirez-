@@ -1,63 +1,44 @@
-import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, FlatList, ActivityIndicator, useWindowDimensions } from "react-native";
 import { useMovies, useMoviesWithDetails } from "../../hooks/useMovies";
-import { dedupeMoviesById, getImageUrl } from "../../utils/movies";
+import { useHomeMovieSearch } from "../../hooks/useHomeMovieSearch";
+import { dedupeMoviesById } from "../../utils/movies";
 import styles from "./Home.screen.styles";
+import { MoviesSearch } from "../../components";
+import { MovieCard } from "../../components";
 import { CompositeNavigationProp, useNavigation } from "@react-navigation/native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MainTabParamList, RootStackParamList } from "../../navigation";
-import { useState, useCallback, useMemo, memo } from "react";
+import { RootStackParamList } from "../../navigation";
+import { MainTabParamList } from "../../navigation/TabBarNavigator";
+import { useCallback, useMemo } from "react";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import type { Movie } from "../../services/movieService";
+import { CINEMA } from "../../utils/cinemaTheme";
 
 type HomeNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, "Home">,
   NativeStackNavigationProp<RootStackParamList>
 >;
 
-const DETAIL_PIPELINE_LIMIT = 200;
-
-const MOVIE_ROW_HEIGHT = 10 + 225 + 10 + 44 + 10;
-
-type MovieListItemProps = {
-  movie: Movie;
-  onPress: (movieId: number) => void;
-};
-
-const MovieListItem = memo(function MovieListItem({ movie, onPress }: MovieListItemProps) {
-  return (
-    <TouchableOpacity style={styles.card} onPress={() => onPress(movie.id)} activeOpacity={0.7}>
-      <Image source={{ uri: getImageUrl(movie.poster_path) }} style={styles.image} resizeMode="cover" />
-      <Text style={styles.title} numberOfLines={2}>
-        {movie.title}
-      </Text>
-    </TouchableOpacity>
-  );
-});
-
 export default function HomeScreen() {
+  const { width: winWidth } = useWindowDimensions();
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useMovies();
-
-  const [searchLetter, setSearchLetter] = useState("");
-  const debouncedSearchLetter = useDebouncedValue(searchLetter, 350);
   const navigation = useNavigation<HomeNavigationProp>();
   const { isOffline } = useNetworkStatus();
+
+  const colWidth = useMemo(() => {
+    const gap = 12;
+    const pad = 16;
+    return (winWidth - pad * 2 - gap) / 2;
+  }, [winWidth]);
 
   const movies = useMemo(() => {
     const flat = data?.pages.flatMap((page) => page.results) ?? [];
     return dedupeMoviesById(flat);
   }, [data?.pages]);
 
-  const filteredMovies = useMemo(() => {
-    const letter = debouncedSearchLetter.toLowerCase();
-    if (!letter) return movies;
-    return movies.filter((movie) => movie.title.toLowerCase().startsWith(letter));
-  }, [movies, debouncedSearchLetter]);
-
-  const moviesForDetailPipeline = useMemo(() => filteredMovies.slice(0, DETAIL_PIPELINE_LIMIT), [filteredMovies]);
-
-  const isPipelineTruncated = filteredMovies.length > DETAIL_PIPELINE_LIMIT;
+  const { searchLetter, setSearchLetter, moviesForDetailPipeline, isPipelineTruncated, pipelineLimit } =
+    useHomeMovieSearch(movies);
 
   const detailQueries = useMoviesWithDetails(moviesForDetailPipeline);
 
@@ -89,20 +70,11 @@ export default function HomeScreen() {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: Movie }) => <MovieListItem movie={item} onPress={handleMoviePress} />,
-    [handleMoviePress]
+    ({ item }: { item: Movie }) => <MovieCard movie={item} posterWidth={colWidth} onPress={handleMoviePress} />,
+    [colWidth, handleMoviePress]
   );
 
   const keyExtractor = useCallback((item: Movie) => `movie-${item.id}`, []);
-
-  const getItemLayout = useCallback(
-    (_: ArrayLike<Movie> | null | undefined, index: number) => ({
-      length: MOVIE_ROW_HEIGHT,
-      offset: MOVIE_ROW_HEIGHT * index,
-      index,
-    }),
-    []
-  );
 
   const onEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -110,13 +82,27 @@ export default function HomeScreen() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const listFooter = useMemo(() => (isFetchingNextPage ? <ActivityIndicator /> : null), [isFetchingNextPage]);
+  const listFooter = useMemo(
+    () =>
+      isFetchingNextPage ? (
+        <View style={styles.loadMoreWrap}>
+          <View style={styles.loadMoreDots}>
+            <View style={[styles.loadMoreDot, styles.loadMoreDotActive]} />
+            <View style={styles.loadMoreDot} />
+            <View style={styles.loadMoreDot} />
+          </View>
+          <ActivityIndicator color={CINEMA.red} />
+          <Text style={styles.loadMoreText}>LOADING MORE CINEMATIC GOLD</Text>
+        </View>
+      ) : null,
+    [isFetchingNextPage]
+  );
 
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
-        <Text>Cargando películas...</Text>
+        <ActivityIndicator size="large" color={CINEMA.red} />
+        <Text style={styles.centerText}>Cargando películas...</Text>
       </View>
     );
   }
@@ -124,7 +110,7 @@ export default function HomeScreen() {
   if (isError) {
     return (
       <View style={styles.center}>
-        <Text>Error cargando películas ❌</Text>
+        <Text style={[styles.centerText, { color: CINEMA.textPrimary }]}>Error cargando películas</Text>
       </View>
     );
   }
@@ -132,34 +118,30 @@ export default function HomeScreen() {
   return (
     <View style={styles.root}>
       {isOffline && <Text style={styles.offlineBanner}>Estás sin conexión ⚠️</Text>}
-      <TextInput
-        placeholder="Buscar por letra..."
+      <MoviesSearch
         value={searchLetter}
         onChangeText={setSearchLetter}
-        style={styles.input}
-        autoCorrect={false}
-        autoCapitalize="none"
+        isPipelineTruncated={isPipelineTruncated}
+        pipelineLimit={pipelineLimit}
       />
-      {isPipelineTruncated && (
-        <Text style={styles.pipelineNotice}>
-          Mostrando el filtro avanzado solo entre las primeras {DETAIL_PIPELINE_LIMIT} coincidencias. Afiná la búsqueda
-          para acotar la lista.
-        </Text>
-      )}
+      <View style={styles.sectionRow}>
+        <Text style={styles.sectionTitle}>Películas populares</Text>
+      </View>
       <FlatList
         data={fullyFilteredMovies}
         keyExtractor={keyExtractor}
+        numColumns={2}
         style={styles.flatList}
         contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.columnWrapper}
         renderItem={renderItem}
-        getItemLayout={getItemLayout}
-        initialNumToRender={8}
-        maxToRenderPerBatch={8}
-        windowSize={7}
+        extraData={colWidth}
+        initialNumToRender={6}
+        maxToRenderPerBatch={6}
+        windowSize={5}
         removeClippedSubviews
-        updateCellsBatchingPeriod={50}
         onEndReached={onEndReached}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.35}
         ListFooterComponent={listFooter}
       />
     </View>
