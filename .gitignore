@@ -40,3 +40,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Demo GIF es demasiado grande para GitHub; mantener local y enlazar desde README
+assets/screens/demo.gif
