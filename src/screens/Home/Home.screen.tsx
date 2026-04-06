@@ -1,16 +1,18 @@
-import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, Button } from "react-native";
+import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, Button, TextInput } from "react-native";
 import { useMovies, useMoviesWithDetails } from "../../hooks/useMovies";
-import { getImageUrl } from "../../utils/movies";
+import { dedupeMoviesById, getImageUrl } from "../../utils/movies";
 import styles from "./Home.screen.styles";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation";
 import { useState, useCallback, useMemo, memo } from "react";
-import { TextInput } from "react-native-gesture-handler";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import type { Movie } from "../../services/movieService";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
+
+const DETAIL_PIPELINE_LIMIT = 200;
 
 const MOVIE_ROW_HEIGHT = 10 + 225 + 10 + 44 + 10;
 
@@ -34,21 +36,29 @@ export default function HomeScreen() {
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useMovies();
 
   const [searchLetter, setSearchLetter] = useState("");
+  const debouncedSearchLetter = useDebouncedValue(searchLetter, 350);
   const navigation = useNavigation<NavigationProp>();
   const { isOffline } = useNetworkStatus();
 
-  const movies = useMemo(() => data?.pages.flatMap((page) => page.results) ?? [], [data?.pages]);
+  const movies = useMemo(() => {
+    const flat = data?.pages.flatMap((page) => page.results) ?? [];
+    return dedupeMoviesById(flat);
+  }, [data?.pages]);
 
   const filteredMovies = useMemo(() => {
-    const letter = searchLetter.toLowerCase();
+    const letter = debouncedSearchLetter.toLowerCase();
     if (!letter) return movies;
     return movies.filter((movie) => movie.title.toLowerCase().startsWith(letter));
-  }, [movies, searchLetter]);
+  }, [movies, debouncedSearchLetter]);
 
-  const detailQueries = useMoviesWithDetails(filteredMovies);
+  const moviesForDetailPipeline = useMemo(() => filteredMovies.slice(0, DETAIL_PIPELINE_LIMIT), [filteredMovies]);
+
+  const isPipelineTruncated = filteredMovies.length > DETAIL_PIPELINE_LIMIT;
+
+  const detailQueries = useMoviesWithDetails(moviesForDetailPipeline);
 
   const fullyFilteredMovies = useMemo(() => {
-    return filteredMovies.filter((movie, index) => {
+    return moviesForDetailPipeline.filter((movie, index) => {
       const query = detailQueries[index];
 
       if (!query?.data) return false;
@@ -65,7 +75,7 @@ export default function HomeScreen() {
 
       return hasGenres && hasBalancedCast;
     });
-  }, [filteredMovies, detailQueries]);
+  }, [moviesForDetailPipeline, detailQueries]);
 
   const handleMoviePress = useCallback(
     (movieId: number) => {
@@ -124,7 +134,15 @@ export default function HomeScreen() {
         value={searchLetter}
         onChangeText={setSearchLetter}
         style={styles.input}
+        autoCorrect={false}
+        autoCapitalize="none"
       />
+      {isPipelineTruncated && (
+        <Text style={styles.pipelineNotice}>
+          Mostrando el filtro avanzado solo entre las primeras {DETAIL_PIPELINE_LIMIT} coincidencias. Afiná la búsqueda
+          para acotar la lista.
+        </Text>
+      )}
       <FlatList
         data={fullyFilteredMovies}
         keyExtractor={keyExtractor}

@@ -38,6 +38,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
   },
+  pipelineNotice: {
+    marginHorizontal: 10,
+    marginBottom: 4,
+    fontSize: 12,
+    color: "#666",
+  },
 });
 
 export default styles;
