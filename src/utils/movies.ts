@@ -1,6 +1,12 @@
 import { Movie } from "../services/movieService";
 
-export const getImageUrl = (path: string) => `https://image.tmdb.org/t/p/w500${path}`;
+export const getImageUrl = (path: string | null | undefined) => (path ? `https://image.tmdb.org/t/p/w500${path}` : "");
+
+export const getBackdropUrl = (path: string | null | undefined) =>
+  path ? `https://image.tmdb.org/t/p/w780${path}` : "";
+
+export const getProfileUrl = (path: string | null | undefined) =>
+  path ? `https://image.tmdb.org/t/p/w185${path}` : "";
 
 /**
  * Deduplicates movies by their id.

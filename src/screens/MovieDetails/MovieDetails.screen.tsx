@@ -1,21 +1,43 @@
-import { useLayoutEffect } from "react";
-import { View, Text, Image, ActivityIndicator, ScrollView, Button } from "react-native";
+import { useLayoutEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  ImageBackground,
+  Image,
+  ActivityIndicator,
+  Pressable,
+  Linking,
+  useWindowDimensions,
+} from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
+import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../../navigation";
 import { CinemaCircleHeaderButton, CinemaHeaderTitle } from "../../components";
-import { CINEMA } from "../../utils/cinemaTheme";
 import { useMovieDetail } from "../../hooks/useMovies";
-import styles from "./MovieDetails.screen.styles";
-import { getImageUrl } from "../../utils/movies";
+import styles, { GRADIENT_START } from "./MovieDetails.screen.styles";
+import { getBackdropUrl, getImageUrl, getProfileUrl } from "../../utils/movies";
+import {
+  buildMetaLine,
+  computeHeroHeight,
+  formatRuntimeMinutes,
+  getDirectorName,
+  getUsCertification,
+} from "../../utils/movieDetailFormat";
 import { useWatchlistStore } from "../../store/watchlistStore";
 import { useNotificationsStore } from "../../store/notificationsStore";
 import { cancelNotification, scheduleMovieReminder } from "../../utils/notifications";
+import { CINEMA } from "../../utils/cinemaTheme";
 
 type MovieDetailsRouteProp = RouteProp<RootStackParamList, "MovieDetails">;
 type MovieDetailsNavProp = NativeStackNavigationProp<RootStackParamList, "MovieDetails">;
 
+const CAST_PREVIEW = 12;
+
 export default function MovieDetailsScreen() {
+  const { width: windowWidth } = useWindowDimensions();
   const route = useRoute<MovieDetailsRouteProp>();
   const navigation = useNavigation<MovieDetailsNavProp>();
   const { movieId } = route.params;
@@ -25,6 +47,12 @@ export default function MovieDetailsScreen() {
   const { notifications, setNotification, removeNotification } = useNotificationsStore();
 
   const isFavorite = isInWatchlist(movieId);
+
+  const onWatchNow = useCallback(() => {
+    if (data) {
+      Linking.openURL(`https://www.themoviedb.org/movie/${data.id}/watch`);
+    }
+  }, [data]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -47,69 +75,151 @@ export default function MovieDetailsScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-        <Text>Cargando detalle...</Text>
+      <View style={styles.screen}>
+        <StatusBar style="light" />
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color={GRADIENT_START} />
+          <Text style={styles.centerText}>Cargando detalle...</Text>
+        </View>
       </View>
     );
   }
 
   if (isError || !data) {
     return (
-      <View style={styles.center}>
-        <Text>Error cargando detalle ❌</Text>
+      <View style={styles.screen}>
+        <StatusBar style="light" />
+        <View style={styles.center}>
+          <Text style={[styles.centerText, { color: "#fff" }]}>Error cargando detalle</Text>
+        </View>
       </View>
     );
   }
 
+  const hasBackdrop = Boolean(data.backdrop_path);
+  const heroHeight = computeHeroHeight(windowWidth, hasBackdrop);
+  const heroUri = getBackdropUrl(data.backdrop_path) || getImageUrl(data.poster_path);
+  const year = data.release_date?.slice(0, 4) ?? "";
+  const runtimeStr = formatRuntimeMinutes(data.runtime);
+  const certification = getUsCertification(data.release_dates ?? undefined);
+  const metaLine = buildMetaLine(year, runtimeStr, certification);
+  const directorName = getDirectorName(data.crew);
+  const productionName = data.production_companies[0]?.name ?? "—";
+  const castPreview = data.cast.slice(0, CAST_PREVIEW);
+  const vote = data.vote_average;
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        source={{
-          uri: getImageUrl(data.poster_path),
-        }}
-        style={styles.image}
-      />
+    <View style={styles.screen}>
+      <ScrollView showsVerticalScrollIndicator={false} bounces contentContainerStyle={styles.scrollContent}>
+        <View style={[styles.heroWrap, { width: windowWidth, height: heroHeight }]}>
+          <ImageBackground
+            source={{ uri: heroUri }}
+            style={[styles.heroImage, { width: windowWidth, height: heroHeight }]}
+            imageStyle={{ width: windowWidth, height: heroHeight }}
+            resizeMode="cover"
+          >
+            {vote > 0 && (
+              <View style={styles.ratingBadge}>
+                <Ionicons name="star" size={14} color="#111" style={styles.ratingStar} />
+                <Text style={styles.ratingValue}>{vote.toFixed(1)}</Text>
+                <Text style={styles.ratingMax}> /10</Text>
+              </View>
+            )}
+          </ImageBackground>
+        </View>
 
-      <Text style={styles.title}>{data.title}</Text>
-      <Button
-        title={isFavorite ? "Quitar de watchlist" : "Agregar a watchlist"}
-        onPress={async () => {
-          if (isFavorite) {
-            removeFromWatchlist(movieId);
+        <View style={styles.body}>
+          <Text style={styles.title}>{data.title}</Text>
+          {metaLine.length > 0 ? <Text style={styles.metaLine}>{metaLine}</Text> : null}
 
-            const notifId = notifications[movieId];
-            if (notifId) {
-              await cancelNotification(notifId);
-              removeNotification(movieId);
-            }
-          } else {
-            addToWatchlist({
-              id: data.id,
-              title: data.title,
-              poster_path: data.poster_path,
-            });
+          <View style={styles.genreRow}>
+            {data.genres.map((g) => (
+              <View key={g.id} style={styles.genrePill}>
+                <Text style={styles.genrePillText}>{g.name}</Text>
+              </View>
+            ))}
+          </View>
 
-            if (!notifications[movieId]) {
-              const notifId = await scheduleMovieReminder(movieId, data.title);
-              setNotification(movieId, notifId);
-            }
-          }
-        }}
-      />
+          <Pressable onPress={onWatchNow} style={({ pressed }) => [styles.primaryBtn, pressed && { opacity: 0.92 }]}>
+            <View style={styles.primaryBtnInner}>
+              <Ionicons name="play" size={22} color="#fff" />
+              <Text style={styles.primaryBtnText}>Ver ahora</Text>
+            </View>
+          </Pressable>
 
-      <Text style={styles.section}>Descripción</Text>
-      <Text>{data.overview}</Text>
+          <Pressable
+            onPress={async () => {
+              if (isFavorite) {
+                removeFromWatchlist(movieId);
+                const notifId = notifications[movieId];
+                if (notifId) {
+                  await cancelNotification(notifId);
+                  removeNotification(movieId);
+                }
+              } else {
+                addToWatchlist({
+                  id: data.id,
+                  title: data.title,
+                  poster_path: data.poster_path ?? "",
+                });
+                if (!notifications[movieId]) {
+                  const notifId = await scheduleMovieReminder(movieId, data.title);
+                  setNotification(movieId, notifId);
+                }
+              }
+            }}
+            style={({ pressed }) => [styles.secondaryBtn, pressed && { opacity: 0.9 }]}
+          >
+            <Ionicons name={isFavorite ? "bookmark" : "bookmark-outline"} size={22} color="#fff" />
+            <Text style={styles.secondaryBtnText}>{isFavorite ? "Quitar de watchlist" : "Agregar a watchlist"}</Text>
+          </Pressable>
 
-      <Text style={styles.section}>Géneros</Text>
-      <Text>{data.genres.map((g) => g.name).join(", ")}</Text>
+          <Text style={styles.sectionTitle}>Sinopsis</Text>
+          <Text style={styles.synopsisText}>
+            {data.overview?.trim() ? data.overview : "Sin descripción disponible."}
+          </Text>
 
-      <Text style={styles.section}>Cast</Text>
-      {data.cast.slice(0, 5).map((actor) => (
-        <Text key={actor.id}>
-          {actor.name} - {actor.character}
-        </Text>
-      ))}
-    </ScrollView>
+          <View style={styles.castHeaderRow}>
+            <Text style={styles.castSectionTitle}>Reparto</Text>
+          </View>
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.castScroll}>
+            {castPreview.map((actor) => {
+              const uri = getProfileUrl(actor.profile_path);
+              return (
+                <View key={actor.id} style={styles.castItem}>
+                  {uri ? (
+                    <Image source={{ uri }} style={styles.castAvatarImg} />
+                  ) : (
+                    <View style={[styles.castAvatar, { justifyContent: "center", alignItems: "center" }]}>
+                      <Ionicons name="person" size={32} color="#666" />
+                    </View>
+                  )}
+                  <Text style={styles.castName} numberOfLines={2}>
+                    {actor.name}
+                  </Text>
+                  <Text style={styles.castCharacter} numberOfLines={2}>
+                    {actor.character || "—"}
+                  </Text>
+                </View>
+              );
+            })}
+          </ScrollView>
+
+          <View style={styles.footerCards}>
+            <View style={styles.infoCard}>
+              <Text style={styles.infoCardLabel}>DIRECTOR</Text>
+              <Text style={styles.infoCardValue}>{directorName}</Text>
+            </View>
+            <View style={styles.infoCard}>
+              <Text style={styles.infoCardLabel}>PRODUCCIÓN</Text>
+              <Text style={styles.infoCardValue} numberOfLines={3}>
+                {productionName}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
