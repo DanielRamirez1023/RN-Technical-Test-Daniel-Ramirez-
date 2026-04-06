@@ -5,6 +5,8 @@ import { useMovieDetail } from "../../hooks/useMovies";
 import styles from "./MovieDetails.screen.styles";
 import { getImageUrl } from "../../utils/movies";
 import { useWatchlistStore } from "../../store/watchlistStore";
+import { useNotificationsStore } from "../../store/notificationsStore";
+import { cancelNotification, scheduleMovieReminder } from "../../utils/notifications";
 
 type MovieDetailsRouteProp = RouteProp<RootStackParamList, "MovieDetails">;
 
@@ -14,6 +16,7 @@ export default function MovieDetailsScreen() {
 
   const { data, isLoading, isError } = useMovieDetail(movieId);
   const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlistStore();
+  const { notifications, setNotification, removeNotification } = useNotificationsStore();
 
   const isFavorite = isInWatchlist(movieId);
 
@@ -46,15 +49,26 @@ export default function MovieDetailsScreen() {
       <Text style={styles.title}>{data.title}</Text>
       <Button
         title={isFavorite ? "Quitar de watchlist" : "Agregar a watchlist"}
-        onPress={() => {
+        onPress={async () => {
           if (isFavorite) {
             removeFromWatchlist(movieId);
+
+            const notifId = notifications[movieId];
+            if (notifId) {
+              await cancelNotification(notifId);
+              removeNotification(movieId);
+            }
           } else {
             addToWatchlist({
               id: data.id,
               title: data.title,
               poster_path: data.poster_path,
             });
+
+            if (!notifications[movieId]) {
+              const notifId = await scheduleMovieReminder(movieId, data.title);
+              setNotification(movieId, notifId);
+            }
           }
         }}
       />
