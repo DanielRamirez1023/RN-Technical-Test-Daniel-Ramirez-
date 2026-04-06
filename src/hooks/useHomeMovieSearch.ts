@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { Movie } from "../services/movieService";
+import { Movie } from "../types/movies";
 import { useDebouncedValue } from "./useDebouncedValue";
 
 export const HOME_MOVIE_DETAIL_PIPELINE_LIMIT = 200;

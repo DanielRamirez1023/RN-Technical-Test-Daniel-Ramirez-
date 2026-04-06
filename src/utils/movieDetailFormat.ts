@@ -1,4 +1,4 @@
-import type { MovieReleaseDates } from "../services/movieService";
+import { MovieReleaseDates } from "../types/movies";
 
 export function formatRuntimeMinutes(minutes: number | null | undefined): string {
   if (minutes == null || minutes <= 0) return "";

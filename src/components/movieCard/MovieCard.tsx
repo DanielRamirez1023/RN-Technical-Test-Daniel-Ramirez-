@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import type { Movie } from "../../services/movieService";
+import { Movie } from "../../types/movies";
 import { getImageUrl } from "../../utils/movies";
 import { formatMovieSubtitle } from "../../utils/movieGenres";
 import { movieCardStyles as styles } from "./MovieCard.styles";

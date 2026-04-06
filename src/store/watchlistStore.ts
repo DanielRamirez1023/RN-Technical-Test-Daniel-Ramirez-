@@ -1,10 +1,5 @@
 import { create } from "zustand";
-
-interface Movie {
-  id: number;
-  title: string;
-  poster_path: string;
-}
+import type { Movie } from "../types/movies";
 
 interface WatchlistState {
   watchlist: Movie[];

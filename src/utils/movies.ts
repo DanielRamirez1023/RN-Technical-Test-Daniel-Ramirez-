@@ -1,4 +1,4 @@
-import { Movie } from "../services/movieService";
+import { Movie } from "../types/movies";
 
 export const getImageUrl = (path: string | null | undefined) => (path ? `https://image.tmdb.org/t/p/w500${path}` : "");
 

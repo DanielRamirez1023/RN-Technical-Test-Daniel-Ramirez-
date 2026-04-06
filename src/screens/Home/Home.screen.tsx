@@ -12,7 +12,7 @@ import { RootStackParamList } from "../../navigation";
 import { MainTabParamList } from "../../navigation/TabBarNavigator";
 import { useCallback, useMemo } from "react";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import type { Movie } from "../../services/movieService";
+import { Movie } from "../../types/movies";
 import { CINEMA } from "../../utils/cinemaTheme";
 
 type HomeNavigationProp = CompositeNavigationProp<
