@@ -1,16 +1,20 @@
-import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, Button, TextInput } from "react-native";
+import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, TextInput } from "react-native";
 import { useMovies, useMoviesWithDetails } from "../../hooks/useMovies";
 import { dedupeMoviesById, getImageUrl } from "../../utils/movies";
 import styles from "./Home.screen.styles";
-import { useNavigation } from "@react-navigation/native";
+import { CompositeNavigationProp, useNavigation } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation";
+import { MainTabParamList, RootStackParamList } from "../../navigation";
 import { useState, useCallback, useMemo, memo } from "react";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import type { Movie } from "../../services/movieService";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
+type HomeNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, "Home">,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 const DETAIL_PIPELINE_LIMIT = 200;
 
@@ -37,7 +41,7 @@ export default function HomeScreen() {
 
   const [searchLetter, setSearchLetter] = useState("");
   const debouncedSearchLetter = useDebouncedValue(searchLetter, 350);
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<HomeNavigationProp>();
   const { isOffline } = useNetworkStatus();
 
   const movies = useMemo(() => {
@@ -128,7 +132,6 @@ export default function HomeScreen() {
   return (
     <View style={styles.root}>
       {isOffline && <Text style={styles.offlineBanner}>Estás sin conexión ⚠️</Text>}
-      <Button title="Ver Watchlist ⭐" onPress={() => navigation.navigate("Watchlist")} />
       <TextInput
         placeholder="Buscar por letra..."
         value={searchLetter}

@@ -1,16 +1,20 @@
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useWatchlistStore } from "../../store/watchlistStore";
-import { useNavigation } from "@react-navigation/native";
+import { CompositeNavigationProp, useNavigation } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation";
+import { MainTabParamList, RootStackParamList } from "../../navigation";
 import { getImageUrl } from "../../utils/movies";
 import styles from "./Watchlist.screen.styles";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
+type WatchlistNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, "Watchlist">,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 export default function WatchlistScreen() {
   const { watchlist } = useWatchlistStore();
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<WatchlistNavigationProp>();
 
   if (watchlist.length === 0) {
     return (
