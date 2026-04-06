@@ -24,11 +24,7 @@ Este proyecto fue construido como parte de un test técnico, enfocándose en arq
 
 ## 🎥 Demo (Para términos de pruebas el tiempo del recordatorio fue modificado)
 
-El GIF de demo supera el límite de tamaño de GitHub, así que debe alojarse fuera del repositorio (por ejemplo en Google Drive).
-
-**[Abrir demo en Google Drive →](https://drive.google.com/file/d/TU_FILE_ID/view?usp=sharing)**
-
-> **Cómo preparar el enlace:** sube `assets/screens/demo.gif` a tu Drive → clic derecho → **Compartir** → **Acceso general** → *Cualquiera con el enlace* → copia el enlace y sustituye `TU_FILE_ID` en la URL de arriba por el ID del archivo (el fragmento entre `/d/` y `/view` en el enlace que te da Drive).
+**[Abrir demo en Google Drive →](https://drive.google.com/file/d/1XAQn7VuOzKGbTSDZMOKYtrTE7kj8TrXw/view?usp=sharing)**
 
 ## 🚀 Tecnologías utilizadas
 
