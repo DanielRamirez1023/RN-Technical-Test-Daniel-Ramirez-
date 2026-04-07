@@ -1,6 +1,7 @@
 import { BottomTabBar, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { getCustomTabBarScreenOptions } from "./helpers";
 import HomeScreen from "../screens/Home/Home.screen";
+import BrowseCategoriesScreen from "../screens/BrowseCategories/BrowseCategories.screen";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import WatchlistScreen from "../screens/Watchlist/Watchlist.screen";
@@ -10,6 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type MainTabParamList = {
   Home: undefined;
+  Browse: undefined;
   Watchlist: undefined;
 };
 
@@ -52,6 +54,23 @@ function MainTabNavigator() {
                 </View>
               ) : (
                 <Ionicons name="home-outline" size={24} color={CINEMA.tabBarIconInactive} />
+              )}
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Browse"
+        component={BrowseCategoriesScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View style={tabIconStyles.hitSlot}>
+              {focused ? (
+                <View style={tabIconStyles.activeHalo}>
+                  <Ionicons name="search" size={24} color={CINEMA.red} />
+                </View>
+              ) : (
+                <Ionicons name="search-outline" size={24} color={CINEMA.tabBarIconInactive} />
               )}
             </View>
           ),

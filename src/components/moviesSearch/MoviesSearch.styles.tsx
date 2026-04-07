@@ -22,6 +22,11 @@ const moviesSearchStyles = StyleSheet.create({
     color: CINEMA.textPrimary,
     paddingVertical: 0,
   },
+  clearButton: {
+    marginLeft: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   pipelineNotice: {
     marginHorizontal: 16,
     marginBottom: 12,

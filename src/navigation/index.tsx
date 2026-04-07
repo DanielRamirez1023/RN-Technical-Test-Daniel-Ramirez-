@@ -1,12 +1,14 @@
 import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MovieDetailsScreen from "../screens/MovieDetails/MovieDetails.screen";
+import GenreResultsScreen from "../screens/GenreResults/GenreResults.screen";
 import { CINEMA } from "../utils/cinemaTheme";
 import MainTabNavigator from "./TabBarNavigator";
 
 export type RootStackParamList = {
   MainTabs: undefined;
   MovieDetails: { movieId: number };
+  GenreResults: { genreId: number; genreName: string };
 };
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
@@ -28,6 +30,18 @@ export default function AppNavigator() {
             headerTitleAlign: "center",
             animation: "slide_from_right",
           }}
+        />
+        <Stack.Screen
+          name="GenreResults"
+          component={GenreResultsScreen}
+          options={({ route }) => ({
+            title: route.params.genreName,
+            headerStyle: { backgroundColor: CINEMA.black },
+            headerShadowVisible: false,
+            headerTintColor: "#fff",
+            headerTitleStyle: { color: CINEMA.textPrimary },
+            animation: "slide_from_right",
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>

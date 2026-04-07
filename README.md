@@ -4,6 +4,8 @@ Aplicación móvil desarrollada con Expo que permite explorar películas utiliza
 
 Este proyecto fue construido como parte de un test técnico, enfocándose en arquitectura limpia, consumo eficiente de datos, experiencia de usuario y uso de tecnologías modernas.
 
+Como **aporte extra** se implementó un **filtro por categorías** (exploración por géneros vía API de TMDb), buscando brindar una **solución más completa** y una **aplicación más integral** que cubra también el descubrimiento de películas por género, además del flujo principal del requisito.
+
 ---
 
 ## 📸 Screenshots
@@ -102,6 +104,13 @@ Este proyecto fue construido como parte de un test técnico, enfocándose en arq
 - Cancelación automática si el usuario abre la película
 - Prevención de duplicados
 - Navegación al detalle desde la notificación
+
+---
+
+### 🗂️ Exploración por categorías (aporte extra)
+
+- Tab dedicada para explorar géneros y filtrar películas por categoría (`/genre/movie/list`, `discover/movie` en TMDb)
+- Búsqueda dentro de la lista de géneros y resultados en grid con infinite scroll, reutilizando el mismo patrón de tarjetas y navegación al detalle
 
 ---
 
