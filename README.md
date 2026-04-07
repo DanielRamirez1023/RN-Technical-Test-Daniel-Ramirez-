@@ -12,15 +12,15 @@ Como **aporte extra** se implementó un **filtro por categorías** (exploración
 
 ### 🍏 Ios
 
-| Home                                   | Detalle                                    | Watchlist                                        |
-| -------------------------------------- | ------------------------------------------ | ------------------------------------------------ |
-| ![Home](./assets/screens/ios/home.png) | ![Detail](./assets/screens/ios/detail.png) | ![Watchlist](./assets/screens/ios/watchlist.png) |
+| Home                                   | Detalle                                    | Watchlist                                        | Categories                                         |
+| -------------------------------------- | ------------------------------------------ | ------------------------------------------------ | -------------------------------------------------- |
+| ![Home](./assets/screens/ios/home.png) | ![Detail](./assets/screens/ios/detail.png) | ![Watchlist](./assets/screens/ios/watchlist.png) | ![Categories](./assets/screens/ios/categories.png) |
 
 ### 🤖 Android
 
-| Home                                       | Detalle                                        | Watchlist                                            |
-| ------------------------------------------ | ---------------------------------------------- | ---------------------------------------------------- |
-| ![Home](./assets/screens/android/home.png) | ![Detail](./assets/screens/android/detail.png) | ![Watchlist](./assets/screens/android/watchlist.png) |
+| Home                                       | Detalle                                        | Watchlist                                            | Categories                                             |
+| ------------------------------------------ | ---------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------ |
+| ![Home](./assets/screens/android/home.png) | ![Detail](./assets/screens/android/detail.png) | ![Watchlist](./assets/screens/android/watchlist.png) | ![Categories](./assets/screens/android/categories.png) |
 
 ---
 
