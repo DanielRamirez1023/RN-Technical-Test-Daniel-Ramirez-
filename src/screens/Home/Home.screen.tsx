@@ -124,9 +124,16 @@ export default function HomeScreen() {
         isPipelineTruncated={isPipelineTruncated}
         pipelineLimit={pipelineLimit}
       />
-      <View style={styles.sectionRow}>
-        <Text style={styles.sectionTitle}>Películas populares</Text>
-      </View>
+      {fullyFilteredMovies.length > 0 && (
+        <View style={styles.sectionRow}>
+          <Text style={styles.sectionTitle}>Películas populares</Text>
+        </View>
+      )}
+      {fullyFilteredMovies.length === 0 && searchLetter.length > 0 && (
+        <View style={styles.center}>
+          <Text style={styles.centerText}>No se encontraron películas</Text>
+        </View>
+      )}
       <FlatList
         data={fullyFilteredMovies}
         keyExtractor={keyExtractor}
@@ -140,7 +147,7 @@ export default function HomeScreen() {
         maxToRenderPerBatch={6}
         windowSize={5}
         removeClippedSubviews
-        onEndReached={onEndReached}
+        onEndReached={searchLetter ? undefined : onEndReached}
         onEndReachedThreshold={0.35}
         ListFooterComponent={listFooter}
       />

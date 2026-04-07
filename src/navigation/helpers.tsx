@@ -1,5 +1,6 @@
 import { CINEMA } from "../utils/cinemaTheme";
 import { CinemaBrandRow } from "../components";
+import { Platform } from "react-native";
 
 const headerScreenOptions = {
   headerStyle: { backgroundColor: CINEMA.black },
@@ -10,11 +11,15 @@ const headerScreenOptions = {
   headerRightContainerStyle: { paddingRight: 12 },
 };
 
+const borderOpacity = Platform.OS === "ios" ? 0.5 : 0.2;
+
 const tabBarScreenOptions = {
   tabBarShowLabel: false,
   tabBarStyle: {
+    height: 110,
     backgroundColor: CINEMA.tabBarBg,
-    paddingTop: 10,
+    paddingTop: 15,
+    borderTopColor: `"rgba(255, 255, 255, ${borderOpacity})"`,
   },
   tabBarActiveBackgroundColor: "transparent",
   tabBarInactiveBackgroundColor: "transparent",

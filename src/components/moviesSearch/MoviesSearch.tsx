@@ -16,7 +16,7 @@ export function MoviesSearch({ value, onChangeText, isPipelineTruncated, pipelin
       <View style={styles.searchRow}>
         <Ionicons name="search" size={20} color={CINEMA.textMuted} style={styles.searchIcon} />
         <TextInput
-          placeholder="Buscar películas, directores..."
+          placeholder="Buscar películas..."
           placeholderTextColor="#636366"
           value={value}
           onChangeText={onChangeText}
