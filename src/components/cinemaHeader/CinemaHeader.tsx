@@ -1,5 +1,6 @@
 import { ComponentProps } from "react";
 import { View, Text, Pressable } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { CINEMA } from "../../utils/cinemaTheme";
 import styles from "./CinemaHeader.styles";
@@ -7,18 +8,20 @@ import styles from "./CinemaHeader.styles";
 type IoniconName = ComponentProps<typeof Ionicons>["name"];
 
 export function CinemaBrandRow() {
+  const { t } = useTranslation();
   return (
     <View style={styles.brandRow} accessibilityRole="header">
       <Ionicons name="film" size={22} color={CINEMA.red} style={styles.brandIcon} />
-      <Text style={styles.brandText}>CINEMA</Text>
+      <Text style={styles.brandText}>{t("common.brand")}</Text>
     </View>
   );
 }
 
 export function CinemaHeaderTitle() {
+  const { t } = useTranslation();
   return (
     <Text style={styles.brandText} accessibilityRole="header">
-      CINEMA
+      {t("common.brand")}
     </Text>
   );
 }

@@ -1,4 +1,5 @@
 import * as Notifications from "expo-notifications";
+import i18n from "../i18n";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -12,13 +13,13 @@ Notifications.setNotificationHandler({
 export const scheduleMovieReminder = async (movieId: number, movieTitle: string) => {
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
-      title: "🎬 Recordatorio",
-      body: `¿Listo para ver ${movieTitle}?`,
+      title: i18n.t("notifications.reminderTitle"),
+      body: i18n.t("notifications.reminderBody", { title: movieTitle }),
       data: { movieId },
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: 180, // 3 minutes
+      seconds: 180,
     },
   });
 

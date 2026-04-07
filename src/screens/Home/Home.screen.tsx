@@ -11,6 +11,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation";
 import { MainTabParamList } from "../../navigation/TabBarNavigator";
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { Movie } from "../../types/movies";
 import { CINEMA } from "../../utils/cinemaTheme";
@@ -21,6 +22,7 @@ type HomeNavigationProp = CompositeNavigationProp<
 >;
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const { width: winWidth } = useWindowDimensions();
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useMovies();
   const navigation = useNavigation<HomeNavigationProp>();
@@ -92,17 +94,17 @@ export default function HomeScreen() {
             <View style={styles.loadMoreDot} />
           </View>
           <ActivityIndicator color={CINEMA.red} />
-          <Text style={styles.loadMoreText}>LOADING MORE CINEMATIC GOLD</Text>
+          <Text style={styles.loadMoreText}>{t("home.loadMoreFooter")}</Text>
         </View>
       ) : null,
-    [isFetchingNextPage]
+    [isFetchingNextPage, t]
   );
 
   if (isLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={CINEMA.red} />
-        <Text style={styles.centerText}>Cargando películas...</Text>
+        <Text style={styles.centerText}>{t("home.loadingMovies")}</Text>
       </View>
     );
   }
@@ -110,14 +112,14 @@ export default function HomeScreen() {
   if (isError) {
     return (
       <View style={styles.center}>
-        <Text style={[styles.centerText, { color: CINEMA.textPrimary }]}>Error cargando películas</Text>
+        <Text style={[styles.centerText, { color: CINEMA.textPrimary }]}>{t("home.errorLoadingMovies")}</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.root}>
-      {isOffline && <Text style={styles.offlineBanner}>Estás sin conexión ⚠️</Text>}
+      {isOffline && <Text style={styles.offlineBanner}>{t("home.offlineBanner")}</Text>}
       <MoviesSearch
         value={searchLetter}
         onChangeText={setSearchLetter}
@@ -126,12 +128,12 @@ export default function HomeScreen() {
       />
       {fullyFilteredMovies.length > 0 && (
         <View style={styles.sectionRow}>
-          <Text style={styles.sectionTitle}>Películas populares</Text>
+          <Text style={styles.sectionTitle}>{t("home.popularMovies")}</Text>
         </View>
       )}
       {fullyFilteredMovies.length === 0 && searchLetter.length > 0 && (
         <View style={styles.center}>
-          <Text style={styles.centerText}>No se encontraron películas</Text>
+          <Text style={styles.centerText}>{t("home.noMoviesFound")}</Text>
         </View>
       )}
       <FlatList

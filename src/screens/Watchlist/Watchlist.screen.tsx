@@ -8,6 +8,7 @@ import { MainTabParamList } from "../../navigation/TabBarNavigator";
 import { RootStackParamList } from "../../navigation";
 import { MovieCard } from "../../components";
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Movie } from "../../types/movies";
 import styles from "./Watchlist.screen.styles";
 
@@ -17,6 +18,7 @@ type WatchlistNavigationProp = CompositeNavigationProp<
 >;
 
 export default function WatchlistScreen() {
+  const { t } = useTranslation();
   const { watchlist } = useWatchlistStore();
   const navigation = useNavigation<WatchlistNavigationProp>();
   const { width: winWidth } = useWindowDimensions();
@@ -54,12 +56,10 @@ export default function WatchlistScreen() {
           <View style={[styles.emptyRing, styles.emptyRingInner]} />
           <Entypo name="clapperboard" size={72} color="#4a4a4a" />
         </View>
-        <Text style={styles.emptyTitle}>No movies yet</Text>
-        <Text style={styles.emptyDescription}>
-          Your cinematic adventure is waiting to be explored. Start adding masterpieces to your list.
-        </Text>
+        <Text style={styles.emptyTitle}>{t("watchlist.emptyTitle")}</Text>
+        <Text style={styles.emptyDescription}>{t("watchlist.emptyDescription")}</Text>
         <TouchableOpacity style={styles.discoverButton} onPress={handleDiscoverPress} activeOpacity={0.85}>
-          <Text style={styles.discoverButtonText}>Discover Movies</Text>
+          <Text style={styles.discoverButtonText}>{t("watchlist.discoverButton")}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -68,8 +68,8 @@ export default function WatchlistScreen() {
   return (
     <View style={styles.root}>
       <View style={styles.headerBlock}>
-        <Text style={styles.pageTitle}>My Watchlist</Text>
-        <Text style={styles.pageSubtitle}>Tu colección cuidadosamente seleccionada de viajes cinematográficos..</Text>
+        <Text style={styles.pageTitle}>{t("watchlist.headerTitle")}</Text>
+        <Text style={styles.pageSubtitle}>{t("watchlist.headerSubtitle")}</Text>
       </View>
       <FlatList
         style={styles.flatList}

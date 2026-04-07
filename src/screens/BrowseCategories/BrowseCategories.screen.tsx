@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState, type ComponentProps } from "react";
+import { useTranslation } from "react-i18next";
 import { View, Text, ScrollView, Pressable, ActivityIndicator, useWindowDimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -23,6 +24,7 @@ type BrowseNav = CompositeNavigationProp<
 >;
 
 export default function BrowseCategoriesScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<BrowseNav>();
   const { width: winWidth } = useWindowDimensions();
   const [genreQuery, setGenreQuery] = useState("");
@@ -64,7 +66,7 @@ export default function BrowseCategoriesScreen() {
       <View style={styles.root}>
         <View style={styles.center}>
           <ActivityIndicator size="large" color={CINEMA.red} />
-          <Text style={styles.centerText}>Cargando categorías...</Text>
+          <Text style={styles.centerText}>{t("browse.loading")}</Text>
         </View>
       </View>
     );
@@ -74,7 +76,7 @@ export default function BrowseCategoriesScreen() {
     return (
       <View style={styles.root}>
         <View style={styles.center}>
-          <Text style={[styles.centerText, { color: CINEMA.textPrimary }]}>No se pudieron cargar los géneros</Text>
+          <Text style={[styles.centerText, { color: CINEMA.textPrimary }]}>{t("browse.error")}</Text>
         </View>
       </View>
     );
@@ -84,13 +86,17 @@ export default function BrowseCategoriesScreen() {
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.pageHeader}>
-          <Text style={styles.pageTitle}>Explorar categorías</Text>
-          <Text style={styles.pageSubtitle}>Encontrá películas por género y descubrí nuevas historias.</Text>
+          <Text style={styles.pageTitle}>{t("browse.title")}</Text>
+          <Text style={styles.pageSubtitle}>{t("browse.subtitle")}</Text>
         </View>
-        <MoviesSearch value={genreQuery} onChangeText={setGenreQuery} placeholder="Buscar en géneros..." />
+        <MoviesSearch
+          value={genreQuery}
+          onChangeText={setGenreQuery}
+          placeholderKey="moviesSearch.placeholderGenres"
+        />
         {featured.length > 0 ? (
           <>
-            <Text style={styles.sectionLabel}>Destacados</Text>
+            <Text style={styles.sectionLabel}>{t("browse.featured")}</Text>
             {gridPairs.map(([a, b], idx) => (
               <CategoriesGrid
                 key={`${a.id}-${b?.id ?? "x"}-${idx}`}
@@ -103,12 +109,12 @@ export default function BrowseCategoriesScreen() {
           </>
         ) : (
           <View style={styles.center}>
-            <Text style={styles.centerText}>No hay géneros que coincidan</Text>
+            <Text style={styles.centerText}>{t("browse.noMatch")}</Text>
           </View>
         )}
         {moreGenres.length > 0 ? (
           <>
-            <Text style={styles.sectionLabel}>Más géneros</Text>
+            <Text style={styles.sectionLabel}>{t("browse.moreGenres")}</Text>
             {moreGenres.map((g) => (
               <Pressable key={g.id} style={styles.genreRow} onPress={() => onSelectGenre(g)}>
                 <View style={styles.genreRowIconWrap}>

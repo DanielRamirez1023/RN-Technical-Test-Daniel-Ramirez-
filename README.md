@@ -38,6 +38,7 @@ Como **aporte extra** se implementó un **filtro por categorías** (exploración
 - Axios
 - AsyncStorage
 - Expo Notifications
+- i18next + react-i18next + expo-localization (inglés y español según idioma del dispositivo)
 
 ---
 
@@ -129,6 +130,8 @@ src/
   navigation/
   utils/
   types/
+  i18n/
+
 ```
 
 ---

@@ -1,4 +1,5 @@
 import { View, Text, TextInput, Pressable } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { CINEMA } from "../../utils/cinemaTheme";
 import styles from "./MoviesSearch.styles";
@@ -9,6 +10,7 @@ export type HomeMovieSearchSectionProps = {
   isPipelineTruncated?: boolean;
   pipelineLimit?: number;
   placeholder?: string;
+  placeholderKey?: "moviesSearch.placeholder" | "moviesSearch.placeholderGenres";
 };
 
 export function MoviesSearch({
@@ -16,14 +18,18 @@ export function MoviesSearch({
   onChangeText,
   isPipelineTruncated = false,
   pipelineLimit = 0,
-  placeholder = "Buscar películas...",
+  placeholder,
+  placeholderKey = "moviesSearch.placeholder",
 }: HomeMovieSearchSectionProps) {
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t(placeholderKey);
+
   return (
     <>
       <View style={styles.searchRow}>
         <Ionicons name="search" size={20} color={CINEMA.textMuted} style={styles.searchIcon} />
         <TextInput
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           placeholderTextColor="#636366"
           value={value}
           onChangeText={onChangeText}
@@ -37,17 +43,14 @@ export function MoviesSearch({
             hitSlop={12}
             style={styles.clearButton}
             accessibilityRole="button"
-            accessibilityLabel="Limpiar búsqueda"
+            accessibilityLabel={t("moviesSearch.clearA11y")}
           >
             <Ionicons name="close-circle" size={22} color={CINEMA.textMuted} />
           </Pressable>
         ) : null}
       </View>
       {isPipelineTruncated && (
-        <Text style={styles.pipelineNotice}>
-          Mostrando el filtro avanzado solo entre las primeras {pipelineLimit} coincidencias. Afiná la búsqueda para
-          acotar la lista.
-        </Text>
+        <Text style={styles.pipelineNotice}>{t("moviesSearch.pipelineNotice", { count: pipelineLimit })}</Text>
       )}
     </>
   );

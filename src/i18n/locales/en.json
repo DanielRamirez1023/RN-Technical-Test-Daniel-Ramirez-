@@ -1,0 +1,85 @@
+{
+  "common": {
+    "brand": "CINEMA",
+    "dash": "—",
+    "ratingOutOf": "/10"
+  },
+  "home": {
+    "loadingMovies": "Loading movies...",
+    "errorLoadingMovies": "Error loading movies",
+    "offlineBanner": "You're offline ⚠️",
+    "popularMovies": "Popular movies",
+    "noMoviesFound": "No movies found",
+    "loadMoreFooter": "LOADING MORE CINEMATIC GOLD"
+  },
+  "moviesSearch": {
+    "placeholder": "Search movies...",
+    "placeholderGenres": "Search within genres...",
+    "clearA11y": "Clear search",
+    "pipelineNotice": "Advanced filtering only applies to the first {{count}} matches. Refine your search to narrow the list."
+  },
+  "watchlist": {
+    "emptyTitle": "No movies yet",
+    "emptyDescription": "Your cinematic adventure is waiting to be explored. Start adding masterpieces to your list.",
+    "discoverButton": "Discover movies",
+    "headerTitle": "My watchlist",
+    "headerSubtitle": "Your curated collection of cinematic journeys."
+  },
+  "browse": {
+    "loading": "Loading categories...",
+    "error": "Could not load genres",
+    "title": "Browse categories",
+    "subtitle": "Find movies by genre and discover new stories.",
+    "featured": "Featured",
+    "moreGenres": "More genres",
+    "noMatch": "No matching genres"
+  },
+  "genreResults": {
+    "clearFilterA11y": "Remove genre filter",
+    "filters": "Filters",
+    "filtersA11y": "Filters (coming soon)",
+    "loadingMovies": "Loading movies...",
+    "errorLoad": "Could not load results",
+    "loadingMore": "Loading more titles",
+    "loadMore": "Load more titles"
+  },
+  "movieDetails": {
+    "backA11y": "Go back",
+    "loading": "Loading details...",
+    "errorDetail": "Error loading details",
+    "watchNow": "Watch now",
+    "removeWatchlist": "Remove from watchlist",
+    "addWatchlist": "Add to watchlist",
+    "synopsis": "Synopsis",
+    "synopsisEmpty": "No description available.",
+    "cast": "Cast",
+    "director": "DIRECTOR",
+    "production": "PRODUCTION",
+    "ratingMax": "/10"
+  },
+  "notifications": {
+    "reminderTitle": "🎬 Reminder",
+    "reminderBody": "Ready to watch {{title}}?"
+  },
+  "genres": {
+    "28": "Action",
+    "12": "Adventure",
+    "16": "Animation",
+    "35": "Comedy",
+    "80": "Crime",
+    "99": "Documentary",
+    "18": "Drama",
+    "10751": "Family",
+    "14": "Fantasy",
+    "36": "History",
+    "27": "Horror",
+    "10402": "Music",
+    "9648": "Mystery",
+    "10749": "Romance",
+    "878": "Science Fiction",
+    "10770": "TV Movie",
+    "53": "Thriller",
+    "10752": "War",
+    "37": "Western"
+  }
+}

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import {
   View,
   Text,
@@ -37,6 +38,7 @@ type MovieDetailsNavProp = NativeStackNavigationProp<RootStackParamList, "MovieD
 const CAST_PREVIEW = 12;
 
 export default function MovieDetailsScreen() {
+  const { t } = useTranslation();
   const { width: windowWidth } = useWindowDimensions();
   const route = useRoute<MovieDetailsRouteProp>();
   const navigation = useNavigation<MovieDetailsNavProp>();
@@ -66,12 +68,12 @@ export default function MovieDetailsScreen() {
           <CinemaCircleHeaderButton
             icon="chevron-back"
             onPress={() => navigation.goBack()}
-            accessibilityLabel="Volver"
+            accessibilityLabel={t("movieDetails.backA11y")}
           />
         </View>
       ),
     });
-  }, [navigation, data]);
+  }, [navigation, data, t]);
 
   if (isLoading) {
     return (
@@ -79,7 +81,7 @@ export default function MovieDetailsScreen() {
         <StatusBar style="light" />
         <View style={styles.center}>
           <ActivityIndicator size="large" color={GRADIENT_START} />
-          <Text style={styles.centerText}>Cargando detalle...</Text>
+          <Text style={styles.centerText}>{t("movieDetails.loading")}</Text>
         </View>
       </View>
     );
@@ -90,7 +92,7 @@ export default function MovieDetailsScreen() {
       <View style={styles.screen}>
         <StatusBar style="light" />
         <View style={styles.center}>
-          <Text style={[styles.centerText, { color: "#fff" }]}>Error cargando detalle</Text>
+          <Text style={[styles.centerText, { color: "#fff" }]}>{t("movieDetails.errorDetail")}</Text>
         </View>
       </View>
     );
@@ -104,7 +106,7 @@ export default function MovieDetailsScreen() {
   const certification = getUsCertification(data.release_dates ?? undefined);
   const metaLine = buildMetaLine(year, runtimeStr, certification);
   const directorName = getDirectorName(data.crew);
-  const productionName = data.production_companies[0]?.name ?? "—";
+  const productionName = data.production_companies[0]?.name ?? t("common.dash");
   const castPreview = data.cast.slice(0, CAST_PREVIEW);
   const vote = data.vote_average;
 
@@ -122,7 +124,7 @@ export default function MovieDetailsScreen() {
               <View style={styles.ratingBadge}>
                 <Ionicons name="star" size={14} color="#111" style={styles.ratingStar} />
                 <Text style={styles.ratingValue}>{vote.toFixed(1)}</Text>
-                <Text style={styles.ratingMax}> /10</Text>
+                <Text style={styles.ratingMax}>{t("movieDetails.ratingMax")}</Text>
               </View>
             )}
           </ImageBackground>
@@ -143,7 +145,7 @@ export default function MovieDetailsScreen() {
           <Pressable onPress={onWatchNow} style={({ pressed }) => [styles.primaryBtn, pressed && { opacity: 0.92 }]}>
             <View style={styles.primaryBtnInner}>
               <Ionicons name="play" size={22} color="#fff" />
-              <Text style={styles.primaryBtnText}>Ver ahora</Text>
+              <Text style={styles.primaryBtnText}>{t("movieDetails.watchNow")}</Text>
             </View>
           </Pressable>
 
@@ -171,16 +173,18 @@ export default function MovieDetailsScreen() {
             style={({ pressed }) => [styles.secondaryBtn, pressed && { opacity: 0.9 }]}
           >
             <Ionicons name={isFavorite ? "bookmark" : "bookmark-outline"} size={22} color="#fff" />
-            <Text style={styles.secondaryBtnText}>{isFavorite ? "Quitar de watchlist" : "Agregar a watchlist"}</Text>
+            <Text style={styles.secondaryBtnText}>
+              {isFavorite ? t("movieDetails.removeWatchlist") : t("movieDetails.addWatchlist")}
+            </Text>
           </Pressable>
 
-          <Text style={styles.sectionTitle}>Sinopsis</Text>
+          <Text style={styles.sectionTitle}>{t("movieDetails.synopsis")}</Text>
           <Text style={styles.synopsisText}>
-            {data.overview?.trim() ? data.overview : "Sin descripción disponible."}
+            {data.overview?.trim() ? data.overview : t("movieDetails.synopsisEmpty")}
           </Text>
 
           <View style={styles.castHeaderRow}>
-            <Text style={styles.castSectionTitle}>Reparto</Text>
+            <Text style={styles.castSectionTitle}>{t("movieDetails.cast")}</Text>
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.castScroll}>
@@ -199,7 +203,7 @@ export default function MovieDetailsScreen() {
                     {actor.name}
                   </Text>
                   <Text style={styles.castCharacter} numberOfLines={2}>
-                    {actor.character || "—"}
+                    {actor.character || t("common.dash")}
                   </Text>
                 </View>
               );
@@ -208,11 +212,11 @@ export default function MovieDetailsScreen() {
 
           <View style={styles.footerCards}>
             <View style={styles.infoCard}>
-              <Text style={styles.infoCardLabel}>DIRECTOR</Text>
+              <Text style={styles.infoCardLabel}>{t("movieDetails.director")}</Text>
               <Text style={styles.infoCardValue}>{directorName}</Text>
             </View>
             <View style={styles.infoCard}>
-              <Text style={styles.infoCardLabel}>PRODUCCIÓN</Text>
+              <Text style={styles.infoCardLabel}>{t("movieDetails.production")}</Text>
               <Text style={styles.infoCardValue} numberOfLines={3}>
                 {productionName}
               </Text>

@@ -1,3 +1,4 @@
+import "./src/i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { queryClient } from "./src/api/queryClient";

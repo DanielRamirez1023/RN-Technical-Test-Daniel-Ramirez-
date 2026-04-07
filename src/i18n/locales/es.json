@@ -1,0 +1,85 @@
+{
+  "common": {
+    "brand": "CINEMA",
+    "dash": "—",
+    "ratingOutOf": "/10"
+  },
+  "home": {
+    "loadingMovies": "Cargando películas...",
+    "errorLoadingMovies": "Error cargando películas",
+    "offlineBanner": "Estás sin conexión ⚠️",
+    "popularMovies": "Películas populares",
+    "noMoviesFound": "No se encontraron películas",
+    "loadMoreFooter": "CARGANDO MÁS ORO CINEMATOGRÁFICO"
+  },
+  "moviesSearch": {
+    "placeholder": "Buscar películas...",
+    "placeholderGenres": "Buscar en géneros...",
+    "clearA11y": "Limpiar búsqueda",
+    "pipelineNotice": "Mostrando el filtro avanzado solo entre las primeras {{count}} coincidencias. Afiná la búsqueda para acotar la lista."
+  },
+  "watchlist": {
+    "emptyTitle": "Aún no hay películas",
+    "emptyDescription": "Tu aventura cinematográfica está por comenzar. Empezá a sumar obras maestras a tu lista.",
+    "discoverButton": "Descubrir películas",
+    "headerTitle": "Mi lista",
+    "headerSubtitle": "Tu colección curada de viajes cinematográficos."
+  },
+  "browse": {
+    "loading": "Cargando géneros...",
+    "error": "No se pudieron cargar los géneros",
+    "title": "Explorar géneros",
+    "subtitle": "Encontrá películas por género y descubrí nuevas historias.",
+    "featured": "Destacados",
+    "moreGenres": "Más géneros",
+    "noMatch": "No hay géneros que coincidan"
+  },
+  "genreResults": {
+    "clearFilterA11y": "Quitar filtro de género",
+    "filters": "Filtros",
+    "filtersA11y": "Filtros (próximamente)",
+    "loadingMovies": "Cargando películas...",
+    "errorLoad": "Error al cargar resultados",
+    "loadingMore": "Cargando más títulos",
+    "loadMore": "Cargar más títulos"
+  },
+  "movieDetails": {
+    "backA11y": "Volver",
+    "loading": "Cargando detalle...",
+    "errorDetail": "Error cargando detalle",
+    "watchNow": "Ver ahora",
+    "removeWatchlist": "Quitar de mi lista",
+    "addWatchlist": "Agregar a mi lista",
+    "synopsis": "Sinopsis",
+    "synopsisEmpty": "Sin descripción disponible.",
+    "cast": "Reparto",
+    "director": "DIRECTOR",
+    "production": "PRODUCCIÓN",
+    "ratingMax": "/10"
+  },
+  "notifications": {
+    "reminderTitle": "🎬 Recordatorio",
+    "reminderBody": "¿Listo para ver {{title}}?"
+  },
+  "genres": {
+    "28": "Acción",
+    "12": "Aventura",
+    "16": "Animación",
+    "35": "Comedia",
+    "80": "Crimen",
+    "99": "Documental",
+    "18": "Drama",
+    "10751": "Familia",
+    "14": "Fantasía",
+    "36": "Historia",
+    "27": "Terror",
+    "10402": "Música",
+    "9648": "Misterio",
+    "10749": "Romance",
+    "878": "Ciencia ficción",
+    "10770": "TV",
+    "53": "Suspenso",
+    "10752": "Bélica",
+    "37": "Western"
+  }
+}

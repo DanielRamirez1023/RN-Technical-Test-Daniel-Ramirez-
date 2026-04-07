@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   View,
@@ -25,6 +26,7 @@ type GenreResultsRoute = RouteProp<RootStackParamList, "GenreResults">;
 type GenreResultsNav = NativeStackNavigationProp<RootStackParamList, "GenreResults">;
 
 export default function GenreResultsScreen() {
+  const { t } = useTranslation();
   const route = useRoute<GenreResultsRoute>();
   const navigation = useNavigation<GenreResultsNav>();
   const { genreId, genreName } = route.params;
@@ -74,18 +76,23 @@ export default function GenreResultsScreen() {
             onPress={() => navigation.goBack()}
             hitSlop={8}
             accessibilityRole="button"
-            accessibilityLabel="Quitar filtro de género"
+            accessibilityLabel={t("genreResults.clearFilterA11y")}
           >
             <Ionicons name="close" size={18} color={CINEMA.textPrimary} />
           </Pressable>
         </View>
-        <Pressable style={styles.filtersPill} disabled accessibilityRole="button">
+        <Pressable
+          style={styles.filtersPill}
+          disabled
+          accessibilityRole="button"
+          accessibilityLabel={t("genreResults.filtersA11y")}
+        >
           <Ionicons name="options-outline" size={18} color={CINEMA.textMuted} />
-          <Text style={styles.filtersPillText}>Filtros</Text>
+          <Text style={styles.filtersPillText}>{t("genreResults.filters")}</Text>
         </Pressable>
       </View>
     ),
-    [genreName, navigation]
+    [genreName, navigation, t]
   );
 
   const listFooter = useMemo(() => {
@@ -93,26 +100,26 @@ export default function GenreResultsScreen() {
       return (
         <View style={styles.loadMoreWrap}>
           <ActivityIndicator color={CINEMA.red} />
-          <Text style={styles.loadMoreText}>Cargando más títulos</Text>
+          <Text style={styles.loadMoreText}>{t("genreResults.loadingMore")}</Text>
         </View>
       );
     }
     if (hasNextPage) {
       return (
         <Pressable style={styles.loadMoreButton} onPress={() => fetchNextPage()}>
-          <Text style={styles.loadMoreButtonText}>Cargar más títulos</Text>
+          <Text style={styles.loadMoreButtonText}>{t("genreResults.loadMore")}</Text>
         </Pressable>
       );
     }
     return null;
-  }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
+  }, [isFetchingNextPage, hasNextPage, fetchNextPage, t]);
 
   if (isLoading) {
     return (
       <View style={styles.root}>
         <View style={styles.center}>
           <ActivityIndicator size="large" color={CINEMA.red} />
-          <Text style={styles.centerText}>Cargando películas...</Text>
+          <Text style={styles.centerText}>{t("genreResults.loadingMovies")}</Text>
         </View>
       </View>
     );
@@ -122,7 +129,7 @@ export default function GenreResultsScreen() {
     return (
       <View style={styles.root}>
         <View style={styles.center}>
-          <Text style={[styles.centerText, { color: CINEMA.textPrimary }]}>Error al cargar resultados</Text>
+          <Text style={[styles.centerText, { color: CINEMA.textPrimary }]}>{t("genreResults.errorLoad")}</Text>
         </View>
       </View>
     );
