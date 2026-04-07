@@ -202,31 +202,74 @@ EXPO_PUBLIC_BASE_URL=https://api.themoviedb.org/3
 
 ---
 
-### 4. Ejecutar la aplicación
+### 4. Development build (recomendado para funcionalidad completa)
+
+Este proyecto incluye **`expo-dev-client`** y plugins nativos (por ejemplo **`expo-notifications`**). Eso implica que **Expo Go no es suficiente** para un comportamiento equivalente al de producción: las notificaciones locales, el **plugin de notificaciones** en `app.json` y otros módulos nativos se compilán **dentro de tu propio binario**. Del mismo modo, **`expo-localization`** usa APIs del sistema para el idioma; un **development build** evita diferencias entre lo que ves en Expo Go y lo que obtendrás en un build release.
+
+**Resumen:** para probar notificaciones, permisos y el stack nativo real, genera e instala un **development build** en emulador o dispositivo.
+
+#### Requisitos previos
+
+- **macOS + Xcode** (simulador o dispositivo iOS), **Android Studio + SDK** (emulador o dispositivo Android), o **EAS Build** en la nube.
+
+#### Generar e instalar el binario de desarrollo (local)
+
+1. Instala dependencias (paso 2) y configura `.env` (paso 3).
+
+2. Genera los proyectos nativos y compila (en la raíz del repo):
+
+   **Android**
+
+   ```bash
+   npx expo run:android
+   ```
+
+   **iOS**
+
+   ```bash
+   npx expo run:ios
+   ```
+
+   Esto aplica la configuración de `app.json` (plugins, permisos de iOS, `infoPlist`, etc.) y deja instalada la app en el emulador o dispositivo conectado.
+
+3. Arranca Metro apuntando al **dev client** (no uses Expo Go):
+
+   ```bash
+   npm run start:dev
+   ```
+
+   o:
+
+   ```bash
+   npx expo start --dev-client
+   ```
+
+4. Abre la app **Movies App** (tu development build) en el dispositivo/emulador; debería conectarse al bundler. Ahí puedes validar notificaciones locales, deep links y el resto del flujo nativo.
+
+> Si prefieres no compilar en local, puedes usar **[EAS Build](https://docs.expo.dev/build/introduction/)** con un perfil `development` y el mismo `expo-dev-client`, instalar el `.apk` / `.ipa` generado y luego ejecutar `npx expo start --dev-client`.
+
+---
+
+### 5. Ejecutar en modo rápido (Expo Go — limitado)
 
 ```bash
 npx expo start
 ```
 
-Esto abrirá el panel de Expo donde puedes ejecutar la app en:
-
-- 📱 Dispositivo físico (Expo Go)
-- 🤖 Emulador Android
-- 🍏 Simulador iOS
-- 🌐 Navegador
+Puedes abrir el proyecto en **Expo Go** escaneando el QR. Ten en cuenta que **algunas capacidades nativas** (sobre todo **notificaciones** con la configuración del plugin de este repo) **no se comportarán igual** que en un development build o en release. Úsalo solo para explorar la UI; para **notificaciones y pruebas finales**, usa el **paso 4**.
 
 ---
 
-### 5. Ejecutar en dispositivo físico (recomendado)
+### 6. Ejecutar en dispositivo físico (Expo Go)
 
 1. Instala **Expo Go**
-2. Escanea el código QR
+2. Escanea el código QR del paso 5
 
 ---
 
 ## 📌 Notas
 
-- Se recomienda probar en dispositivo físico para validar notificaciones
+- Para **notificaciones** y pruebas fieles al entorno real, usa el **development build** (paso 4), no solo Expo Go. y recuerda habilitar el permiso de notificaciones en la app.
 - La primera carga requiere conexión a internet
 - Luego la app funciona en modo offline
 
