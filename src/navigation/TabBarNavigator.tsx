@@ -1,10 +1,12 @@
 import { BottomTabBar, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { customTabBarScreenOptions } from "./helpers";
+import { getCustomTabBarScreenOptions } from "./helpers";
 import HomeScreen from "../screens/Home/Home.screen";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import WatchlistScreen from "../screens/Watchlist/Watchlist.screen";
 import { CINEMA } from "../utils/cinemaTheme";
+import { useMemo } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type MainTabParamList = {
   Home: undefined;
@@ -33,8 +35,11 @@ const tabIconStyles = StyleSheet.create({
 });
 
 function MainTabNavigator() {
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const screenOptions = useMemo(() => getCustomTabBarScreenOptions(bottomInset), [bottomInset]);
+
   return (
-    <Tab.Navigator tabBar={(props) => <BottomTabBar {...props} />} screenOptions={customTabBarScreenOptions}>
+    <Tab.Navigator tabBar={(props) => <BottomTabBar {...props} />} screenOptions={screenOptions}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
